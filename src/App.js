@@ -7,8 +7,10 @@ import DonationSection from './components/DonationSection';
 import Footer from './components/Footer';
 import './App.css';
 
-// For demo - would be replaced with API call in production
-import { samplePredictions, prepareTimelineData, calculateMeanYear } from './utils/dataHelpers';
+// Import API functions
+import { fetchPredictions, fetchTimelineData } from './services/api';
+// Keep the helper for data preparation
+import { prepareTimelineData } from './utils/dataHelpers';
 
 function App() {
   const [predictions, setPredictions] = useState([]);
@@ -20,17 +22,28 @@ function App() {
   const [sortDirection, setSortDirection] = useState('asc');
   const [selectedDefinition, setSelectedDefinition] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [error, setError] = useState(null);
 
   // Load predictions on component mount
   useEffect(() => {
-    // This would be an API call in production
-    setPredictions(samplePredictions);
-    setFilteredPredictions(samplePredictions);
-    
-    // Generate timeline data
-    // In production, this would likely be a separate API call
-    const data = prepareTimelineData(samplePredictions);
-    setTimelineData(data);
+    const loadData = async () => {
+      try {
+        // Fetch predictions from API
+        const predictionsData = await fetchPredictions();
+        setPredictions(predictionsData);
+        setFilteredPredictions(predictionsData);
+        
+        // Generate timeline data
+        const timelineResponse = await fetchTimelineData();
+        const data = prepareTimelineData(timelineResponse);
+        setTimelineData(data);
+      } catch (err) {
+        console.error('Error loading data:', err);
+        setError('Failed to load data. Please try again later.');
+      }
+    };
+
+    loadData();
   }, []);
 
   // Handle filters
@@ -151,45 +164,51 @@ function App() {
       />
       
       <main className="main-content">
-        {medianYear && (
-          <div className="metrics-dashboard">
-            <div className="metric-box">
-              <h3>Median Predicted Year</h3>
-              <div className="metric-value">{medianYear}</div>
+        {error ? (
+          <div className="error-message">{error}</div>
+        ) : (
+          <>
+            {medianYear && (
+              <div className="metrics-dashboard">
+                <div className="metric-box">
+                  <h3>Median Predicted Year</h3>
+                  <div className="metric-value">{medianYear}</div>
+                </div>
+                <div className="metric-box">
+                  <h3>Time Until Median Prediction</h3>
+                  <div className="metric-value countdown">{medianYear - new Date().getFullYear()} Years</div>
+                </div>
+              </div>
+            )}
+            
+            <FilterPanel 
+              searchTerm={searchTerm}
+              onSearchChange={e => setSearchTerm(e.target.value)}
+              timeframeFilter={timeframeFilter}
+              onTimeframeChange={e => setTimeframeFilter(e.target.value)}
+              sortBy={sortBy}
+              onSortChange={e => setSortBy(e.target.value)}
+              sortDirection={sortDirection}
+              onToggleSortDirection={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+            />
+            
+            <PredictionTable 
+              predictions={filteredPredictions} 
+              isDarkMode={isDarkMode}
+              onViewDefinition={handleDefinitionClick}
+            />
+            
+            <div className="timeline-section">
+              <h2>Historical AGI Timeline Predictions</h2>
+              <p className="timeline-description">
+                How expert predictions have changed over time (showing mean year for date ranges)
+              </p>
+              <TimelineChart data={timelineData} isDarkMode={isDarkMode} />
             </div>
-            <div className="metric-box">
-              <h3>Time Until Median Prediction</h3>
-              <div className="metric-value countdown">{medianYear - new Date().getFullYear()} Years</div>
-            </div>
-          </div>
+            
+            <DonationSection />
+          </>
         )}
-        
-        <FilterPanel 
-          searchTerm={searchTerm}
-          onSearchChange={e => setSearchTerm(e.target.value)}
-          timeframeFilter={timeframeFilter}
-          onTimeframeChange={e => setTimeframeFilter(e.target.value)}
-          sortBy={sortBy}
-          onSortChange={e => setSortBy(e.target.value)}
-          sortDirection={sortDirection}
-          onToggleSortDirection={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-        />
-        
-        <PredictionTable 
-          predictions={filteredPredictions} 
-          isDarkMode={isDarkMode}
-          onViewDefinition={handleDefinitionClick}
-        />
-        
-        <div className="timeline-section">
-          <h2>Historical AGI Timeline Predictions</h2>
-          <p className="timeline-description">
-            How expert predictions have changed over time (showing mean year for date ranges)
-          </p>
-          <TimelineChart data={timelineData} isDarkMode={isDarkMode} />
-        </div>
-        
-        <DonationSection />
       </main>
       
       <Footer />
