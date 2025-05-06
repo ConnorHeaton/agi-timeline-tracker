@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import './App.css';
 
 // Import API functions
-import { fetchPredictions, fetchTimelineData } from './services/api';
+import { fetchTimelineData } from './services/api';
 // Keep the helper for data preparation
 import { prepareTimelineData } from './utils/dataHelpers';
 
@@ -28,13 +28,12 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch predictions from API
-        const predictionsData = await fetchPredictions();
-        setPredictions(predictionsData);
-        setFilteredPredictions(predictionsData);
+        // Fetch data from timeline endpoint
+        const timelineResponse = await fetchTimelineData();
+        setPredictions(timelineResponse);
+        setFilteredPredictions(timelineResponse);
         
         // Generate timeline data
-        const timelineResponse = await fetchTimelineData();
         const data = prepareTimelineData(timelineResponse);
         setTimelineData(data);
       } catch (err) {
