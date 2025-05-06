@@ -10,7 +10,7 @@ import './App.css';
 // Import API functions
 import { fetchTimelineData } from './services/api';
 // Keep the helper for data preparation
-import { prepareTimelineData } from './utils/dataHelpers';
+import { prepareTimelineData, getLatestPredictionsByExpert } from './utils/dataHelpers';
 
 function App() {
   const [predictions, setPredictions] = useState([]);
@@ -28,16 +28,13 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch data from timeline endpoint
-        const timelineResponse = await fetchTimelineData();
-        setPredictions(timelineResponse);
-        setFilteredPredictions(timelineResponse);
-        
-        // Generate timeline data
-        const data = prepareTimelineData(timelineResponse);
-        setTimelineData(data);
-      } catch (err) {
-        console.error('Error loading data:', err);
+        const data = await fetchTimelineData();
+        const latestPredictions = getLatestPredictionsByExpert(data);
+        setPredictions(latestPredictions);
+        setFilteredPredictions(latestPredictions);
+        setTimelineData(prepareTimelineData(latestPredictions));
+      } catch (error) {
+        console.error('Error loading data:', error);
         setError('Failed to load data. Please try again later.');
       }
     };
@@ -180,6 +177,7 @@ function App() {
               </div>
             )}
             
+            {/* Temporarily disabled for simplified UI
             <FilterPanel 
               searchTerm={searchTerm}
               onSearchChange={e => setSearchTerm(e.target.value)}
@@ -190,6 +188,7 @@ function App() {
               sortDirection={sortDirection}
               onToggleSortDirection={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
             />
+            */}
             
             <PredictionTable 
               predictions={filteredPredictions} 

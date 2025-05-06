@@ -306,3 +306,24 @@ export const prepareTimelineData = (predictions) => {
   
   return { chartData, experts: Array.from(expertMap.keys()) };
 };
+
+export const getLatestPredictionsByExpert = (predictions) => {
+  // Group predictions by expert
+  const expertGroups = predictions.reduce((groups, prediction) => {
+    const expert = prediction.expert;
+    if (!groups[expert]) {
+      groups[expert] = [];
+    }
+    groups[expert].push(prediction);
+    return groups;
+  }, {});
+
+  // For each expert, get their most recent prediction
+  return Object.values(expertGroups).map(expertPredictions => {
+    return expertPredictions.reduce((latest, current) => {
+      const latestDate = new Date(latest.predictionDate);
+      const currentDate = new Date(current.predictionDate);
+      return currentDate > latestDate ? current : latest;
+    });
+  });
+};
