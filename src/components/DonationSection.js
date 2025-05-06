@@ -3,8 +3,8 @@ import React from 'react';
 const DonationSection = () => {
   return (
     <div className="donation-section">
-      <h2>Support Our Work</h2>
-      <p>Help us continue tracking and analyzing AGI timeline predictions.</p>
+      <h3>Support My Work</h3>
+      <p>Support hosting costs to keep the site running.</p>
       
       <div className="donation-options">
         <a 
@@ -14,14 +14,6 @@ const DonationSection = () => {
           className="donation-button"
         >
           Donate via PayPal
-        </a>
-        <a 
-          href="https://www.patreon.com/agitimeline" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="donation-button"
-        >
-          Support on Patreon
         </a>
       </div>
       
@@ -39,11 +31,6 @@ const DonationSection = () => {
           Subscribe to the Newsletter
         </a>
       </div>
-      
-      <p className="donation-note">
-        For tax-deductible donations or other support options, please 
-        <a href="mailto:support@agitimeline.org"> contact us</a>.
-      </p>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = ({ onToggleDarkMode, isDarkMode }) => {
+const Header = () => {
   return (
     <header>
       <div className="header-content">
@@ -15,15 +15,6 @@ const Header = ({ onToggleDarkMode, isDarkMode }) => {
             <li><a href="#about">About</a></li>
             <li><a href="#methodology">Methodology</a></li>
             <li><a href="#submit">Suggest an Update</a></li>
-            <li>
-              <button 
-                className="theme-toggle"
-                onClick={onToggleDarkMode}
-                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {isDarkMode ? '☀️' : '🌙'}
-              </button>
-            </li>
           </ul>
         </nav>
       </div>

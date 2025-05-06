@@ -16,7 +16,6 @@ function App() {
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [timelineData, setTimelineData] = useState({ chartData: [], experts: [] });
   const [selectedDefinition, setSelectedDefinition] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [error, setError] = useState(null);
 
   // Load predictions on component mount
@@ -36,12 +35,6 @@ function App() {
 
     loadData();
   }, []);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
-    document.body.classList.toggle('dark-mode');
-  };
 
   // Handle definition click
   const handleDefinitionClick = (definition) => {
@@ -74,11 +67,8 @@ function App() {
   const medianYear = calculateMedianYear();
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <Header 
-        onToggleDarkMode={toggleDarkMode} 
-        isDarkMode={isDarkMode} 
-      />
+    <div className="app-container dark-mode">
+      <Header />
       
       <main className="main-content">
         {error ? (
@@ -100,7 +90,7 @@ function App() {
             
             <PredictionTable 
               predictions={filteredPredictions} 
-              isDarkMode={isDarkMode}
+              isDarkMode={true}
               onViewDefinition={handleDefinitionClick}
             />
             
@@ -109,7 +99,7 @@ function App() {
               <p className="timeline-description">
                 How expert predictions have changed over time (showing mean year for date ranges)
               </p>
-              <TimelineChart data={timelineData} isDarkMode={isDarkMode} />
+              <TimelineChart data={timelineData} isDarkMode={true} />
             </div>
             
             <DonationSection />
