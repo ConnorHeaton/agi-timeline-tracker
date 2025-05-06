@@ -7,7 +7,7 @@ const Header = () => {
         <div className="logo">
           <h1>AGI Timeline Tracker</h1>
           <p className="subtitle">
-            What experts, researchers and AI CEOs say about their expected timeframes for artificial general intelligence to be achieved (and their definitions of AGI)
+            Collected predictions about when AGI (artificial general intelligence) will be achieved from insider AI researchers and CEOs
           </p>
         </div>
         <nav>
