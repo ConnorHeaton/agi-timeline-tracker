@@ -18,13 +18,6 @@ const Footer = () => {
             <li><a href="#donate">Donate</a></li>
           </ul>
         </div>
-        
-        <div className="footer-section">
-          <h3>Contact</h3>
-          <p>
-            <a href="mailto:info@agitimeline.org">info@agitimeline.org</a>
-          </p>
-        </div>
       </div>
       
       <div className="footer-bottom">
