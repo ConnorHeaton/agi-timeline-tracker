@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import PredictionTable from './components/PredictionTable';
-import FilterPanel from './components/FilterPanel';
 import TimelineChart from './components/TimelineChart';
 import DonationSection from './components/DonationSection';
 import Footer from './components/Footer';
@@ -16,10 +15,6 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [timelineData, setTimelineData] = useState({ chartData: [], experts: [] });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [timeframeFilter, setTimeframeFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('expert');
-  const [sortDirection, setSortDirection] = useState('asc');
   const [selectedDefinition, setSelectedDefinition] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [error, setError] = useState(null);
@@ -41,80 +36,6 @@ function App() {
 
     loadData();
   }, []);
-
-  // Handle filters
-  useEffect(() => {
-    // Filtering and sorting logic
-    let result = [...predictions];
-    
-    // Apply search filter
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(p => 
-        p.expert.toLowerCase().includes(term) || 
-        p.organization.toLowerCase().includes(term) ||
-        p.source.toLowerCase().includes(term) ||
-        p.definition.toLowerCase().includes(term)
-      );
-    }
-    
-    // Apply timeframe filter
-    if (timeframeFilter !== 'all') {
-      const currentYear = new Date().getFullYear();
-      
-      switch (timeframeFilter) {
-        case 'near':
-          result = result.filter(p => {
-            const year = parseInt(p.estimatedDate.split('-')[0]);
-            return year && year <= currentYear + 10;
-          });
-          break;
-        case 'mid':
-          result = result.filter(p => {
-            const year = parseInt(p.estimatedDate.split('-')[0]);
-            return year && year > currentYear + 10 && year <= currentYear + 30;
-          });
-          break;
-        case 'far':
-          result = result.filter(p => {
-            const year = parseInt(p.estimatedDate.split('-')[0]);
-            return year && year > currentYear + 30;
-          });
-          break;
-        default:
-          break;
-      }
-    }
-    
-    // Apply sorting
-    result.sort((a, b) => {
-      let comparison = 0;
-      
-      switch (sortBy) {
-        case 'expert':
-          comparison = a.expert.localeCompare(b.expert);
-          break;
-        case 'date':
-          const getFirstYear = date => parseInt(date.split('-')[0]);
-          comparison = getFirstYear(a.estimatedDate) - getFirstYear(b.estimatedDate);
-          break;
-        case 'predictionDate':
-          const dateA = new Date(a.predictionDate);
-          const dateB = new Date(b.predictionDate);
-          comparison = dateA - dateB;
-          break;
-        case 'organization':
-          comparison = a.organization.localeCompare(b.organization);
-          break;
-        default:
-          break;
-      }
-      
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-    
-    setFilteredPredictions(result);
-  }, [predictions, searchTerm, timeframeFilter, sortBy, sortDirection]);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -176,19 +97,6 @@ function App() {
                 </div>
               </div>
             )}
-            
-            {/* Temporarily disabled for simplified UI
-            <FilterPanel 
-              searchTerm={searchTerm}
-              onSearchChange={e => setSearchTerm(e.target.value)}
-              timeframeFilter={timeframeFilter}
-              onTimeframeChange={e => setTimeframeFilter(e.target.value)}
-              sortBy={sortBy}
-              onSortChange={e => setSortBy(e.target.value)}
-              sortDirection={sortDirection}
-              onToggleSortDirection={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-            />
-            */}
             
             <PredictionTable 
               predictions={filteredPredictions} 
