@@ -2,16 +2,26 @@ import React from 'react';
 
 const DonationSection = () => {
   return (
-    <section className="donation-section">
-      <h2>Support AGI Timeline Tracker</h2>
-      <p>
-        This resource is provided for free to the AI safety and alignment community.
-        Your donations help cover hosting costs and fund ongoing maintenance.
-      </p>
+    <div className="donation-section">
+      <h2>Support Our Work</h2>
+      <p>Help us continue tracking and analyzing AGI timeline predictions.</p>
       
       <div className="donation-options">
-        <a href="#donate" className="donation-button">
-          Donate $5 to hosting costs
+        <a 
+          href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_ID" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="donation-button"
+        >
+          Donate via PayPal
+        </a>
+        <a 
+          href="https://www.patreon.com/agitimeline" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="donation-button"
+        >
+          Support on Patreon
         </a>
       </div>
       
@@ -34,7 +44,7 @@ const DonationSection = () => {
         For tax-deductible donations or other support options, please 
         <a href="mailto:support@agitimeline.org"> contact us</a>.
       </p>
-    </section>
+    </div>
   );
 };
 
