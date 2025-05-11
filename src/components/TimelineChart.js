@@ -69,7 +69,7 @@ const TimelineChart = ({ data, isDarkMode }) => {
         >
           <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#555' : '#ccc'} />
           <XAxis 
-            dataKey="year" 
+            dataKey="yearWithMonth" 
             stroke={isDarkMode ? '#eee' : '#333'}
             label={{ 
               value: 'Year Prediction Was Made', 
@@ -77,6 +77,10 @@ const TimelineChart = ({ data, isDarkMode }) => {
               offset: -5,
               fill: isDarkMode ? '#eee' : '#333'
             }}
+            // Format the ticks to show only years
+            tickFormatter={(value) => Math.floor(value)}
+            // Use integer years for the ticks
+            ticks={Array.from(new Set(chartData.map(item => Math.floor(item.yearWithMonth))))}
           />
           <YAxis
             stroke={isDarkMode ? '#eee' : '#333'}

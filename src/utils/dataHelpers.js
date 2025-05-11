@@ -65,6 +65,9 @@ export const calculateMeanYear = (dateRange) => {
 
 // Format data for timeline visualization
 export const prepareTimelineData = (predictions) => {
+  console.log('Original predictions count:', predictions.length);
+  console.log('Sample prediction:', predictions[0]);
+  
   // Map from our API predictions to the format needed for the chart
   // NOTE: We're now using ONLY the data from the API instead of combining with hardcoded historical data
   const formattedPredictions = predictions.map(p => ({
@@ -77,6 +80,8 @@ export const prepareTimelineData = (predictions) => {
     definitionSummary: p.definitionSummary
   }));
   
+  console.log('Formatted predictions count:', formattedPredictions.length);
+  
   // Use only the data from the API
   const allPredictions = formattedPredictions;
   
@@ -86,11 +91,16 @@ export const prepareTimelineData = (predictions) => {
   
   allPredictions.forEach(prediction => {
     const key = `${prediction.expertName}-${prediction.predictionDate}`;
+    console.log('Processing prediction:', prediction.expertName, prediction.predictionDate, prediction.estimatedDate);
     if (!seen.has(key)) {
       seen.add(key);
       uniquePredictions.push(prediction);
+    } else {
+      console.log('Skipping duplicate:', key);
     }
   });
+  
+  console.log('Unique predictions count:', uniquePredictions.length);
   
   // Sort predictions by expert and date
   const sortedPredictions = uniquePredictions.sort((a, b) => {
@@ -110,17 +120,45 @@ export const prepareTimelineData = (predictions) => {
     const predYear = predDate.getFullYear();
     
     // Extract years from estimated date
-    const years = prediction.estimatedDate.match(/\d{4}/g);
     let estimatedMean;
     
-    if (years && years.length > 0) {
-      if (years.length === 1) {
-        estimatedMean = parseInt(years[0]);
-      } else {
-        estimatedMean = Math.round((parseInt(years[0]) + parseInt(years[years.length - 1])) / 2);
-      }
+    // Handle case where estimatedDate might be missing or null
+    if (!prediction.estimatedDate) {
+      console.warn(`Missing estimated date for ${prediction.expertName}. Using current year + 10 as fallback.`);
+      estimatedMean = new Date().getFullYear() + 10; // Default to 10 years from now as fallback
     } else {
-      return; // Skip if no years found
+      // Try to extract 4-digit years from the string
+      const years = prediction.estimatedDate.match(/\d{4}/g);
+      console.log(`Extracting years from ${prediction.expertName}'s estimate "${prediction.estimatedDate}": `, years);
+      
+      if (years && years.length > 0) {
+        // Normal case: we found year(s) in the string
+        if (years.length === 1) {
+          estimatedMean = parseInt(years[0]);
+          console.log(`Single year found: ${estimatedMean}`);
+        } else {
+          estimatedMean = Math.round((parseInt(years[0]) + parseInt(years[years.length - 1])) / 2);
+          console.log(`Multiple years found, using mean: ${estimatedMean} (from ${years[0]} and ${years[years.length - 1]})`);
+        }
+      } else {
+        // Try to extract 2-digit years (e.g., '30s might mean 2030s)
+        const shortYears = prediction.estimatedDate.match(/\b(\d{1,2})(?:s|'s)?\b/g);
+        if (shortYears && shortYears.length > 0) {
+          // Assume it's referring to a decade in the 21st century
+          const decade = parseInt(shortYears[0].replace(/[^0-9]/g, ''));
+          estimatedMean = 2000 + decade;
+          console.log(`Found decade reference: ${shortYears[0]}, interpreting as ${estimatedMean}`);
+        } else if (prediction.estimatedDate.toLowerCase().includes('never') || 
+                  prediction.estimatedDate.toLowerCase().includes('impossible')) {
+          // Handle "never" or "impossible" estimates
+          estimatedMean = 2100; // Set to far future
+          console.log(`Found 'never' type estimate, setting to year 2100`);
+        } else {
+          // Last resort: use current year + 20 as default
+          estimatedMean = new Date().getFullYear() + 20;
+          console.warn(`No years found in estimated date: "${prediction.estimatedDate}" for ${prediction.expertName}. Using fallback year ${estimatedMean}.`);
+        }
+      }
     }
     
     if (!expertMap.has(prediction.expertName)) {
@@ -140,31 +178,56 @@ export const prepareTimelineData = (predictions) => {
   const chartData = [];
   
   // Find min and max years to create the full range
-  const allYears = sortedPredictions.map(p => new Date(p.predictionDate).getFullYear());
+  const allYears = sortedPredictions.map(p => parseMonthYearDate(p.predictionDate).getFullYear());
   const minYear = Math.min(...allYears);
   const maxYear = Math.max(...allYears);
   
   // Create data points for each year
   for (let year = minYear; year <= maxYear; year++) {
-    const dataPoint = { year };
-    
-    // Add data for each expert at this year if available
-    expertMap.forEach((predictions, expertName) => {
-      // Find the most recent prediction for this expert that's before or equal to the current year
-      const relevantPredictions = predictions.filter(p => p.year <= year);
-      if (relevantPredictions.length > 0) {
-        // Get the most recent prediction
-        const latestPrediction = relevantPredictions.reduce((latest, current) => 
-          new Date(latest.predictionDate) > new Date(current.predictionDate) ? latest : current
-        );
+    // Create a data point for each month in the year
+    for (let month = 0; month < 12; month++) {
+      // Create a decimal representation of the year with month (e.g., 2023.0, 2023.08, 2023.17, etc.)
+      // This allows more precise positioning on the x-axis while keeping year-only labels
+      const yearWithMonth = year + (month / 12);
+      const dataPoint = { 
+        year, // Keep the integer year for x-axis labels
+        yearWithMonth // Use this for more precise positioning
+      };
+      
+      // Create a date object for the current year/month for comparison
+      const currentYearMonth = new Date(year, month, 1);
+      
+      // Add data for each expert at this year/month if available
+      expertMap.forEach((predictions, expertName) => {
+        // Find predictions from this expert that were made before or during this month/year
+        const relevantPredictions = predictions.filter(p => {
+          const predDate = parseMonthYearDate(p.predictionDate);
+          return predDate <= currentYearMonth;
+        });
         
-        dataPoint[expertName] = latestPrediction.estimatedYear;
-        dataPoint[`${expertName}_source`] = latestPrediction.source;
-        dataPoint[`${expertName}_definition`] = latestPrediction.definition;
+        if (relevantPredictions.length > 0) {
+          // Get the most recent prediction
+          const latestPrediction = relevantPredictions.reduce((latest, current) => {
+            const latestDate = parseMonthYearDate(latest.predictionDate);
+            const currentDate = parseMonthYearDate(current.predictionDate);
+            return currentDate > latestDate ? current : latest;
+          });
+          
+          dataPoint[expertName] = latestPrediction.estimatedYear;
+          dataPoint[`${expertName}_source`] = latestPrediction.source;
+          dataPoint[`${expertName}_definition`] = latestPrediction.definition;
+        }
+      });
+      
+      // Only add the data point if it has any expert predictions
+      const hasData = Object.keys(dataPoint).some(key => 
+        !['year', 'yearWithMonth'].includes(key)
+      );
+      
+      if (hasData) {
+        chartData.push(dataPoint);
       }
-    });
-    
-    chartData.push(dataPoint);
+    }
   }
   
   return { chartData, experts: Array.from(expertMap.keys()) };
