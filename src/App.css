@@ -463,6 +463,15 @@ tr:hover {
   background-color: var(--secondary-light);
 }
 
+/* Browser compatibility note */
+.browser-compatibility-note {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  text-align: center;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
 /* Footer */
 footer {
   background-color: var(--primary-dark);

@@ -4,27 +4,49 @@
 
 // Helper function to parse dates in format 'Month Year' (e.g., 'September 2022')
 const parseMonthYearDate = (dateString) => {
-  if (!dateString) return new Date();
-  
-  // Check if it's already a full date format (e.g., '2022-09-15')
-  if (dateString.includes('-') || dateString.includes('/')) {
-    return new Date(dateString);
+  if (!dateString) {
+    console.warn('Empty date string provided to parseMonthYearDate');
+    return new Date();
   }
   
-  // Handle 'Month Year' format
-  const parts = dateString.split(' ');
-  if (parts.length === 2) {
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const monthIndex = monthNames.findIndex(m => m === parts[0]);
-    const year = parseInt(parts[1]);
-    
-    if (monthIndex !== -1 && !isNaN(year)) {
-      return new Date(year, monthIndex, 1); // Use the 1st day of the month
+  try {
+    // Check if it's already a full date format (e.g., '2022-09-15')
+    if (dateString.includes('-') || dateString.includes('/')) {
+      const result = new Date(dateString);
+      // Check if the date is valid
+      if (isNaN(result.getTime())) {
+        console.warn(`Invalid date parsed from: ${dateString}`);
+      }
+      return result;
     }
+    
+    // Handle 'Month Year' format
+    const parts = dateString.split(' ');
+    if (parts.length === 2) {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthIndex = monthNames.findIndex(m => m === parts[0]);
+      const year = parseInt(parts[1]);
+      
+      console.log(`Parsing date: ${dateString}, Month: ${parts[0]} (index: ${monthIndex}), Year: ${year}`);
+      
+      if (monthIndex !== -1 && !isNaN(year)) {
+        return new Date(year, monthIndex, 1); // Use the 1st day of the month
+      } else {
+        console.warn(`Could not parse month/year from: ${dateString}`);
+      }
+    }
+    
+    // Fallback to standard parsing
+    const fallbackDate = new Date(dateString);
+    if (isNaN(fallbackDate.getTime())) {
+      console.warn(`Fallback date parsing failed for: ${dateString}`);
+      return new Date(); // Return current date as last resort
+    }
+    return fallbackDate;
+  } catch (error) {
+    console.error(`Error parsing date ${dateString}:`, error);
+    return new Date(); // Return current date in case of error
   }
-  
-  // Fallback to standard parsing
-  return new Date(dateString);
 };
 
 // Calculate mean year from date range (e.g., "2030-2040" => " (2035)")

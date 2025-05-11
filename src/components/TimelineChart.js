@@ -23,7 +23,7 @@ const TimelineChart = ({ data, isDarkMode }) => {
       'Ilya Sutskever': colors[3],
       'Jack Clark': colors[4],
       'Geoffrey Hinton': colors[5],
-      'Metaculus': '#000080' // Navy blue
+      'Metaculus': '#5D8AA8' // Mid blue-grey (Steel Blue)
     };
     
     return expertColors[expertName] || colors[index % colors.length];
@@ -103,6 +103,9 @@ const TimelineChart = ({ data, isDarkMode }) => {
           ))}
         </LineChart>
       </ResponsiveContainer>
+      <p className="browser-compatibility-note">
+        Note: If the chart is not loading correctly, please try using Chrome or ensure JavaScript is enabled in your browser.
+      </p>
     </div>
   );
 };
