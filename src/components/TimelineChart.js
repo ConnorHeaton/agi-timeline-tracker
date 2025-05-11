@@ -34,9 +34,12 @@ const TimelineChart = ({ data, isDarkMode }) => {
     if (active && payload && payload.length) {
       const visiblePayload = payload.filter(p => !p.name.includes('_'));
       
+      // Get the formatted date from the payload
+      const formattedDate = payload[0]?.payload?.formattedDate || label;
+      
       return (
         <div className={`timeline-tooltip ${isDarkMode ? 'dark' : 'light'}`}>
-          <p className="tooltip-year">{`Year: ${label}`}</p>
+          <p className="tooltip-year">{`Prediction made: ${formattedDate}`}</p>
           {visiblePayload.map((entry, index) => {
             const source = payload.find(p => p.name === `${entry.name}_source`);
             

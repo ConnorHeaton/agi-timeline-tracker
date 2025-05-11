@@ -174,61 +174,43 @@ export const prepareTimelineData = (predictions) => {
     });
   });
   
-  // Format data for the chart (all points on the same timeline)
+  // Format data for the chart - only include actual prediction points
   const chartData = [];
   
-  // Find min and max years to create the full range
-  const allYears = sortedPredictions.map(p => parseMonthYearDate(p.predictionDate).getFullYear());
-  const minYear = Math.min(...allYears);
-  const maxYear = Math.max(...allYears);
-  
-  // Create data points for each year
-  for (let year = minYear; year <= maxYear; year++) {
-    // Create a data point for each month in the year
-    for (let month = 0; month < 12; month++) {
-      // Create a decimal representation of the year with month (e.g., 2023.0, 2023.08, 2023.17, etc.)
-      // This allows more precise positioning on the x-axis while keeping year-only labels
-      const yearWithMonth = year + (month / 12);
-      const dataPoint = { 
-        year, // Keep the integer year for x-axis labels
-        yearWithMonth // Use this for more precise positioning
+  // Process each expert's predictions individually
+  expertMap.forEach((predictions, expertName) => {
+    // Sort predictions by date
+    const sortedExpertPredictions = [...predictions].sort((a, b) => {
+      const dateA = parseMonthYearDate(a.predictionDate);
+      const dateB = parseMonthYearDate(b.predictionDate);
+      return dateA - dateB;
+    });
+    
+    // Add a data point for each actual prediction
+    sortedExpertPredictions.forEach(prediction => {
+      const predDate = parseMonthYearDate(prediction.predictionDate);
+      const predYear = predDate.getFullYear();
+      const predMonth = predDate.getMonth();
+      
+      // Create a decimal representation of the year with month
+      const yearWithMonth = predYear + (predMonth / 12);
+      
+      // Format the date as "Month Year"
+      const formattedDate = prediction.predictionDate;
+      
+      // Create the data point
+      const dataPoint = {
+        year: predYear,
+        yearWithMonth,
+        formattedDate,
+        [expertName]: prediction.estimatedYear,
+        [`${expertName}_source`]: prediction.source,
+        [`${expertName}_definition`]: prediction.definition
       };
       
-      // Create a date object for the current year/month for comparison
-      const currentYearMonth = new Date(year, month, 1);
-      
-      // Add data for each expert at this year/month if available
-      expertMap.forEach((predictions, expertName) => {
-        // Find predictions from this expert that were made before or during this month/year
-        const relevantPredictions = predictions.filter(p => {
-          const predDate = parseMonthYearDate(p.predictionDate);
-          return predDate <= currentYearMonth;
-        });
-        
-        if (relevantPredictions.length > 0) {
-          // Get the most recent prediction
-          const latestPrediction = relevantPredictions.reduce((latest, current) => {
-            const latestDate = parseMonthYearDate(latest.predictionDate);
-            const currentDate = parseMonthYearDate(current.predictionDate);
-            return currentDate > latestDate ? current : latest;
-          });
-          
-          dataPoint[expertName] = latestPrediction.estimatedYear;
-          dataPoint[`${expertName}_source`] = latestPrediction.source;
-          dataPoint[`${expertName}_definition`] = latestPrediction.definition;
-        }
-      });
-      
-      // Only add the data point if it has any expert predictions
-      const hasData = Object.keys(dataPoint).some(key => 
-        !['year', 'yearWithMonth'].includes(key)
-      );
-      
-      if (hasData) {
-        chartData.push(dataPoint);
-      }
-    }
-  }
+      chartData.push(dataPoint);
+    });
+  });
   
   return { chartData, experts: Array.from(expertMap.keys()) };
 };
