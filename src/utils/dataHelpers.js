@@ -2,6 +2,31 @@
 
 // No sample data - using only real data from the API
 
+// Helper function to parse dates in format 'Month Year' (e.g., 'September 2022')
+const parseMonthYearDate = (dateString) => {
+  if (!dateString) return new Date();
+  
+  // Check if it's already a full date format (e.g., '2022-09-15')
+  if (dateString.includes('-') || dateString.includes('/')) {
+    return new Date(dateString);
+  }
+  
+  // Handle 'Month Year' format
+  const parts = dateString.split(' ');
+  if (parts.length === 2) {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthIndex = monthNames.findIndex(m => m === parts[0]);
+    const year = parseInt(parts[1]);
+    
+    if (monthIndex !== -1 && !isNaN(year)) {
+      return new Date(year, monthIndex, 1); // Use the 1st day of the month
+    }
+  }
+  
+  // Fallback to standard parsing
+  return new Date(dateString);
+};
+
 // Calculate mean year from date range (e.g., "2030-2040" => " (2035)")
 export const calculateMeanYear = (dateRange) => {
   const years = dateRange.match(/\d{4}/g);
@@ -52,14 +77,14 @@ export const prepareTimelineData = (predictions) => {
       return a.expertName.localeCompare(b.expertName);
     }
     // Then sort by prediction date
-    return new Date(a.predictionDate) - new Date(b.predictionDate);
+    return parseMonthYearDate(a.predictionDate) - parseMonthYearDate(b.predictionDate);
   });
 
   // Create a map of experts and their predictions
   const expertMap = new Map();
   
   sortedPredictions.forEach(prediction => {
-    const predDate = new Date(prediction.predictionDate);
+    const predDate = parseMonthYearDate(prediction.predictionDate);
     const predYear = predDate.getFullYear();
     
     // Extract years from estimated date

@@ -22,7 +22,8 @@ const TimelineChart = ({ data, isDarkMode }) => {
       'Demis Hassabis': colors[2],
       'Ilya Sutskever': colors[3],
       'Jack Clark': colors[4],
-      'Geoffrey Hinton': colors[5]
+      'Geoffrey Hinton': colors[5],
+      'Metaculus': '#000080' // Navy blue
     };
     
     return expertColors[expertName] || colors[index % colors.length];
