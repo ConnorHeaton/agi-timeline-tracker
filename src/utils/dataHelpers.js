@@ -13,7 +13,7 @@ const parseMonthYearDate = (dateString) => {
     // Check if it's already a full date format (e.g., '2022-09-15')
     if (dateString.includes('-') || dateString.includes('/')) {
       // Handle ISO format dates (YYYY-MM-DD)
-      const parts = dateString.split(/[-\/]/);
+      const parts = dateString.split(/[-/]/);
       if (parts.length >= 3) {
         const year = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
