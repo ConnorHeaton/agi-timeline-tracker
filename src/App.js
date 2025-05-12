@@ -76,16 +76,21 @@ function App() {
         ) : (
           <>
             {medianYear && (
-              <div className="metrics-dashboard">
-                <div className="metric-box">
-                  <h3>Median Predicted Year</h3>
-                  <div className="metric-value">{medianYear}</div>
+              <>
+                <div className="metrics-dashboard">
+                  <div className="metric-box">
+                    <h3>Median Predicted Year</h3>
+                    <div className="metric-value">{medianYear}</div>
+                  </div>
+                  <div className="metric-box">
+                    <h3>Time Until Median Prediction</h3>
+                    <div className="metric-value countdown">{medianYear - new Date().getFullYear()} Years</div>
+                  </div>
                 </div>
-                <div className="metric-box">
-                  <h3>Time Until Median Prediction</h3>
-                  <div className="metric-value countdown">{medianYear - new Date().getFullYear()} Years</div>
-                </div>
-              </div>
+                <p className="browser-compatibility-note">
+                  Note: There isn't a single agreed definition of AGI, but achieving even the lowest bar definition would likely result in significant economic impacts.
+                </p>
+              </>
             )}
             
             <PredictionTable 

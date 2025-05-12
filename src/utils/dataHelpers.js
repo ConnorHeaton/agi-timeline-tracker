@@ -12,37 +12,65 @@ const parseMonthYearDate = (dateString) => {
   try {
     // Check if it's already a full date format (e.g., '2022-09-15')
     if (dateString.includes('-') || dateString.includes('/')) {
-      const result = new Date(dateString);
-      // Check if the date is valid
-      if (isNaN(result.getTime())) {
-        console.warn(`Invalid date parsed from: ${dateString}`);
+      // Handle ISO format dates (YYYY-MM-DD)
+      const parts = dateString.split(/[-\/]/);
+      if (parts.length >= 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
+        const day = parseInt(parts[2], 10);
+        
+        if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+          return new Date(year, month, day);
+        }
       }
-      return result;
+      
+      // If we couldn't parse it ourselves, try the built-in parser
+      const result = new Date(dateString);
+      if (!isNaN(result.getTime())) {
+        return result;
+      }
+      
+      console.warn(`Invalid date parsed from: ${dateString}`);
+      return new Date(); // Return current date as fallback
     }
     
     // Handle 'Month Year' format
-    const parts = dateString.split(' ');
+    const parts = dateString.trim().split(' ');
     if (parts.length === 2) {
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      const monthIndex = monthNames.findIndex(m => m === parts[0]);
-      const year = parseInt(parts[1]);
+      // Also handle abbreviated month names
+      const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       
-      console.log(`Parsing date: ${dateString}, Month: ${parts[0]} (index: ${monthIndex}), Year: ${year}`);
+      let monthIndex = monthNames.findIndex(m => m.toLowerCase() === parts[0].toLowerCase());
+      
+      // If not found, try abbreviated month names
+      if (monthIndex === -1) {
+        monthIndex = monthAbbreviations.findIndex(m => m.toLowerCase() === parts[0].toLowerCase());
+      }
+      
+      const year = parseInt(parts[1], 10);
       
       if (monthIndex !== -1 && !isNaN(year)) {
         return new Date(year, monthIndex, 1); // Use the 1st day of the month
       } else {
-        console.warn(`Could not parse month/year from: ${dateString}`);
+        console.warn(`Could not parse month/year from: ${dateString}, Month: ${parts[0]}, Year: ${parts[1]}`);
       }
+    }
+    
+    // Try to parse just the year if it's a 4-digit number
+    if (/^\d{4}$/.test(dateString.trim())) {
+      const year = parseInt(dateString.trim(), 10);
+      return new Date(year, 0, 1); // January 1st of the year
     }
     
     // Fallback to standard parsing
     const fallbackDate = new Date(dateString);
-    if (isNaN(fallbackDate.getTime())) {
-      console.warn(`Fallback date parsing failed for: ${dateString}`);
-      return new Date(); // Return current date as last resort
+    if (!isNaN(fallbackDate.getTime())) {
+      return fallbackDate;
     }
-    return fallbackDate;
+    
+    console.warn(`Fallback date parsing failed for: ${dateString}`);
+    return new Date(); // Return current date as last resort
   } catch (error) {
     console.error(`Error parsing date ${dateString}:`, error);
     return new Date(); // Return current date in case of error
@@ -188,15 +216,24 @@ export const prepareTimelineData = (predictions) => {
     
     // Add a data point for each actual prediction
     sortedExpertPredictions.forEach(prediction => {
+      // Parse the prediction date
       const predDate = parseMonthYearDate(prediction.predictionDate);
+      
+      // Check if date is valid before proceeding
+      if (isNaN(predDate.getTime())) {
+        console.warn(`Skipping invalid prediction date: ${prediction.predictionDate}`);
+        return; // Skip this prediction
+      }
+      
       const predYear = predDate.getFullYear();
       const predMonth = predDate.getMonth();
       
-      // Create a decimal representation of the year with month
+      // Create a decimal representation of the year with month (e.g., 2023.25 for March 2023)
       const yearWithMonth = predYear + (predMonth / 12);
       
-      // Format the date as "Month Year"
-      const formattedDate = prediction.predictionDate;
+      // Format the date as "Month Year" for display
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const formattedDate = `${monthNames[predMonth]} ${predYear}`;
       
       // Create the data point
       const dataPoint = {
