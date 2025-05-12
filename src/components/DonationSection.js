@@ -8,7 +8,7 @@ const DonationSection = () => {
       
       <div className="donation-options">
         <a 
-          href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_ID" 
+          href="https://www.paypal.com/ncp/payment/N8TP2UD8KG2DY" 
           target="_blank" 
           rel="noopener noreferrer"
           className="donation-button"

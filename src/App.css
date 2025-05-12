@@ -289,36 +289,20 @@ tr:hover {
 }
 
 .definition-tooltip {
-  position: absolute;
-  z-index: 100;
+  position: fixed; /* Changed to fixed for dynamic positioning */
+  z-index: 1000; /* Increased z-index to ensure it's above everything */
   width: 300px;
   background-color: var(--card-color);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 1rem;
   border-left: 3px solid var(--secondary-color);
-  top: auto;
-  bottom: calc(100% + 10px);
-  right: 0;
-  left: auto;
-  transform: none;
   max-height: 300px;
   overflow-y: auto;
+  /* Position is set dynamically via JavaScript */
 }
 
-/* Add a small triangle pointer to the tooltip */
-.definition-tooltip::before {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  top: auto;
-  right: 10px;
-  left: auto;
-  transform: none;
-  border-width: 10px 10px 0 10px;
-  border-style: solid;
-  border-color: var(--card-color) transparent transparent transparent;
-}
+/* Removed the tooltip arrow since positioning is now dynamic */
 
 .tooltip-content {
   color: var(--text-color);
