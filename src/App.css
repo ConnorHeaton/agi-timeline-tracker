@@ -172,7 +172,7 @@ nav a:hover {
 
 /* Note about AGI definitions */
 .browser-compatibility-note {
-  margin-top: 0.5rem;
+  margin-top: 0.1rem;
   margin-bottom: 2rem;
   padding: 0.5rem 0;
   color: var(--text-light);
@@ -470,7 +470,7 @@ tr:hover {
 }
 
 .subscription-section {
-  background-color: var(--primary-light);
+  background-color: #000000;
   border-radius: var(--border-radius);
   padding: 1.5rem;
   margin: 1.5rem auto;
