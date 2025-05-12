@@ -96,7 +96,7 @@ const PredictionTable = ({ predictions, isDarkMode }) => {
                         onClick={e => e.stopPropagation()}
                       >
                         <div className="tooltip-content">
-                          <h4>AGI Definition</h4>
+                          <h4>{prediction.expert}'s AGI Definition</h4>
                           <p>{prediction.definition}</p>
                         </div>
                       </div>
