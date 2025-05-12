@@ -16,5 +16,14 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- Hidden form for Netlify Forms -->
+    <form name="suggest-update" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="expert" />
+      <input type="text" name="otherExpert" />
+      <input type="text" name="predictionDate" />
+      <input type="text" name="estimatedDate" />
+      <input type="url" name="sourceUrl" />
+      <textarea name="definition"></textarea>
+    </form>
   </body>
-</html> 
+</html>

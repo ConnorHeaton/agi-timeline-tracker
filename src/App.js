@@ -5,6 +5,7 @@ import TimelineChart from './components/TimelineChart';
 import DonationSection from './components/DonationSection';
 import Footer from './components/Footer';
 import MethodologyModal from './components/MethodologyModal';
+import SuggestUpdateModal from './components/SuggestUpdateModal';
 import './App.css';
 
 // Import API functions
@@ -18,6 +19,7 @@ function App() {
   const [timelineData, setTimelineData] = useState({ chartData: [], experts: [] });
   const [selectedDefinition, setSelectedDefinition] = useState(null);
   const [showMethodology, setShowMethodology] = useState(false);
+  const [showSuggestUpdate, setShowSuggestUpdate] = useState(false);
   const [error, setError] = useState(null);
 
   // Load predictions on component mount
@@ -54,6 +56,8 @@ function App() {
       const hash = window.location.hash;
       if (hash === '#methodology') {
         setShowMethodology(true);
+      } else if (hash === '#submit') {
+        setShowSuggestUpdate(true);
       }
     };
 
@@ -148,6 +152,7 @@ function App() {
       )}
 
       <MethodologyModal isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
+      <SuggestUpdateModal isOpen={showSuggestUpdate} onClose={() => setShowSuggestUpdate(false)} />
     </div>
   );
 }

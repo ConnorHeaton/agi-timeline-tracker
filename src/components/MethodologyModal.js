@@ -13,11 +13,11 @@ const MethodologyModal = ({ isOpen, onClose }) => {
           </p>
           
           <p>
-            Several AGI timeline prediction tracker sites exist, including the excellent work of AI Digest <a href="https://theaidigest.org/timeline" target="_blank" rel="noopener noreferrer">theaidigest.org/timeline</a> and AIMultiple <a href="https://research.aimultiple.com/artificial-general-intelligence-singularity-timing/#why-do-some-experts-believe-that-we-will-not-reach-agi" target="_blank" rel="noopener noreferrer">research.aimultiple.com</a>, but I haven't found any which focus on the forecasts of insiders and directly tackle the question of how AGI is defined for a given prediction.
+            Several AGI timeline prediction tracker sites exist, including the excellent work of <a href="https://theaidigest.org/timeline" target="_blank" rel="noopener noreferrer">AI Digest</a> and <a href="https://research.aimultiple.com/artificial-general-intelligence-singularity-timing/#why-do-some-experts-believe-that-we-will-not-reach-agi" target="_blank" rel="noopener noreferrer">AIMultiple</a>, but I haven't found any which focus on the forecasts of insiders and directly tackle the question of how AGI is defined for a given prediction.
           </p>
           
           <p>
-            Defining AGI is tricky, and in some cases, even what a given AI insider uses as a working definition has shifted over time. This does make combining the predictions into a median problematic. I nevertheless chose to include it because even the less ambitious definitions imply significant impacts to how humans live and work, and having some sense of when experts anticipate that happening is useful <a href="https://en.wikipedia.org/wiki/All_models_are_wrong" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/All_models_are_wrong</a>.
+            Defining AGI is tricky, and in some cases, even what a given AI insider uses as a working definition has shifted over time. This does make combining the predictions into a median problematic. I nevertheless chose to include it because even the less ambitious definitions imply significant impacts to how humans live and work, and having some sense of when experts anticipate that happening is <a href="https://en.wikipedia.org/wiki/All_models_are_wrong" target="_blank" rel="noopener noreferrer">useful</a>.
           </p>
           
           <p>
