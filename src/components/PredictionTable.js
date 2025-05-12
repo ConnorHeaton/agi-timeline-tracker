@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { calculateMeanYear } from '../utils/dataHelpers';
 
 const PredictionTable = ({ predictions, isDarkMode }) => {
@@ -10,8 +10,8 @@ const PredictionTable = ({ predictions, isDarkMode }) => {
   // Find the active prediction
   const activePrediction = predictions.find(p => p.id === activeTooltipId);
   
-  // Position the tooltip after it's rendered
-  const positionTooltip = () => {
+  // Position the tooltip after it's rendered - wrapped in useCallback to prevent infinite loops
+  const positionTooltip = useCallback(() => {
     const tooltip = tooltipRef.current;
     const activeButton = activeTooltipId ? buttonRefs.current[activeTooltipId] : null;
     
@@ -35,7 +35,7 @@ const PredictionTable = ({ predictions, isDarkMode }) => {
       tooltip.style.left = `${left}px`;
       tooltip.style.visibility = 'visible';
     }
-  };
+  }, [activeTooltipId, buttonRefs, tooltipRef]);
 
   // Position tooltip whenever it changes
   useEffect(() => {
@@ -47,7 +47,7 @@ const PredictionTable = ({ predictions, isDarkMode }) => {
       window.addEventListener('resize', positionTooltip);
       return () => window.removeEventListener('resize', positionTooltip);
     }
-  }, [activeTooltipId]);
+  }, [activeTooltipId, positionTooltip]);
 
   // Handle clicks outside of the active tooltip
   useEffect(() => {
