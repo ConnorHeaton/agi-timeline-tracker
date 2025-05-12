@@ -181,6 +181,23 @@ nav a:hover {
   text-align: center;
 }
 
+/* Timeline Chart Spacing Adjustments */
+.timeline-chart .recharts-wrapper {
+  margin-bottom: 10px; /* Reduce space between legend and note */
+}
+
+.timeline-chart .recharts-xAxis .recharts-label {
+  transform: translateY(-7px); /* Add more space between x-axis and label */
+}
+
+.timeline-chart .recharts-default-legend {
+  margin-top: 1px !important; /* Add 1px space between label and legend */
+}
+
+.timeline-chart .browser-compatibility-note {
+  margin-top: 10px; /* Set specific spacing for chart note */
+}
+
 /* Filter Panel */
 .filter-panel {
   background-color: var(--card-color);
