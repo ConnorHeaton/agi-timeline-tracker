@@ -17,7 +17,6 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [timelineData, setTimelineData] = useState({ chartData: [], experts: [] });
-  const [selectedDefinition, setSelectedDefinition] = useState(null);
   const [showMethodology, setShowMethodology] = useState(false);
   const [showSuggestUpdate, setShowSuggestUpdate] = useState(false);
   const [error, setError] = useState(null);
@@ -40,15 +39,7 @@ function App() {
     loadData();
   }, []);
 
-  // Handle definition click
-  const handleDefinitionClick = (definition) => {
-    setSelectedDefinition(definition);
-  };
-
-  // Close definition modal
-  const closeDefinitionModal = () => {
-    setSelectedDefinition(null);
-  };
+  // No longer needed - using tooltips instead
 
   // Handle hash changes for navigation
   useEffect(() => {
@@ -123,7 +114,6 @@ function App() {
             <PredictionTable 
               predictions={filteredPredictions} 
               isDarkMode={true}
-              onViewDefinition={handleDefinitionClick}
             />
             
             <div className="timeline-section">
@@ -141,16 +131,6 @@ function App() {
       
       <Footer />
       
-      {selectedDefinition && (
-        <div className="modal-overlay" onClick={closeDefinitionModal}>
-          <div className="definition-modal" onClick={e => e.stopPropagation()}>
-            <h3>AGI Definition</h3>
-            <p>{selectedDefinition}</p>
-            <button onClick={closeDefinitionModal}>Close</button>
-          </div>
-        </div>
-      )}
-
       <MethodologyModal isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
       <SuggestUpdateModal isOpen={showSuggestUpdate} onClose={() => setShowSuggestUpdate(false)} />
     </div>
