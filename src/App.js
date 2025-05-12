@@ -48,11 +48,6 @@ function App() {
     setSelectedDefinition(null);
   };
 
-  // Toggle methodology modal
-  const toggleMethodologyModal = () => {
-    setShowMethodology(!showMethodology);
-  };
-
   // Handle hash changes for navigation
   useEffect(() => {
     const handleHashChange = () => {
