@@ -4,6 +4,7 @@ import PredictionTable from './components/PredictionTable';
 import TimelineChart from './components/TimelineChart';
 import DonationSection from './components/DonationSection';
 import Footer from './components/Footer';
+import MethodologyModal from './components/MethodologyModal';
 import './App.css';
 
 // Import API functions
@@ -16,6 +17,7 @@ function App() {
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [timelineData, setTimelineData] = useState({ chartData: [], experts: [] });
   const [selectedDefinition, setSelectedDefinition] = useState(null);
+  const [showMethodology, setShowMethodology] = useState(false);
   const [error, setError] = useState(null);
 
   // Load predictions on component mount
@@ -45,6 +47,32 @@ function App() {
   const closeDefinitionModal = () => {
     setSelectedDefinition(null);
   };
+
+  // Toggle methodology modal
+  const toggleMethodologyModal = () => {
+    setShowMethodology(!showMethodology);
+  };
+
+  // Handle hash changes for navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#methodology') {
+        setShowMethodology(true);
+      }
+    };
+
+    // Check hash on initial load
+    handleHashChange();
+
+    // Add event listener for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   // Calculate median predicted year
   const calculateMedianYear = () => {
@@ -123,6 +151,8 @@ function App() {
           </div>
         </div>
       )}
+
+      <MethodologyModal isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
     </div>
   );
 }

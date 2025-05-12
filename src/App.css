@@ -426,7 +426,7 @@ tr:hover {
   z-index: 1000;
 }
 
-.definition-modal {
+.definition-modal, .methodology-modal {
   background-color: var(--card-color);
   border-radius: var(--border-radius);
   padding: 2rem;
@@ -438,16 +438,16 @@ tr:hover {
   border-left: 4px solid var(--secondary-color);
 }
 
-.definition-modal h3 {
+.definition-modal h3, .methodology-modal h2 {
   margin-bottom: 1rem;
   color: var(--primary-color);
 }
 
-.dark-mode .definition-modal h3 {
+.dark-mode .definition-modal h3, .dark-mode .methodology-modal h2 {
   color: white;
 }
 
-.definition-modal button {
+.definition-modal button, .methodology-modal button {
   background-color: var(--secondary-color);
   color: white;
   border: none;
@@ -459,8 +459,34 @@ tr:hover {
   transition: var(--transition);
 }
 
-.definition-modal button:hover {
+.definition-modal button:hover, .methodology-modal button:hover {
   background-color: var(--secondary-light);
+}
+
+/* Methodology Modal Specific Styles */
+.methodology-modal {
+  max-width: 800px;
+}
+
+.methodology-content {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.methodology-content p {
+  margin-bottom: 1rem;
+}
+
+.methodology-content a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.methodology-content a:hover {
+  color: var(--secondary-light);
+  text-decoration: underline;
 }
 
 /* Browser compatibility note */
